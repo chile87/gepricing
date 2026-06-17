@@ -28,6 +28,17 @@ class KpiMetrics(BaseModel):
     activeStrategies: KpiMetricItem
 
 
+class ImpactForecastPoint(BaseModel):
+    week: str
+    revenue: float
+    margin: float
+    inventory: float
+
+
+class ImpactForecastResponse(BaseModel):
+    points: list[ImpactForecastPoint]
+
+
 PricingOpportunityAction = Literal[
     "Raise Price",
     "Lower Price",
@@ -72,8 +83,9 @@ class RecommendationInboxItem(BaseModel):
     category: str
     skuPrice: float | None = None
     competitorPrice: float | None = None
+    approvalPrice: float | None = None
     recommendationType: RecommendationType
-    actionLabel: str
+    description: str
     impact30d: str
     confidence: RecommendationConfidence
     status: RecommendationStatus = "pending"
@@ -89,3 +101,41 @@ class RecommendationInboxMeta(BaseModel):
 class RecommendationInboxResponse(BaseModel):
     meta: RecommendationInboxMeta
     items: list[RecommendationInboxItem]
+
+
+class ApprovalPriceHistoryItem(BaseModel):
+    recommendationId: str | None = None
+    oldPrice: float | None = None
+    approvalPrice: float
+    actor: str | None = None
+    reason: str | None = None
+    appliedAt: str
+
+
+class CompetitorSourcePriceItem(BaseModel):
+    sourceCode: str
+    sourceName: str | None = None
+    sourceWebsite: str | None = None
+    competitorSku: str | None = None
+    competitorProductName: str | None = None
+    price: float
+    originalPrice: float | None = None
+    promoPrice: float | None = None
+    currency: str | None = None
+    availability: str | None = None
+    stockStatus: str | None = None
+    url: str | None = None
+    crawledAt: str
+
+
+class RecommendationSkuDetail(BaseModel):
+    recommendationId: str
+    skuId: str
+    sku: str
+    category: str
+    currentPrice: float | None = None
+    recommendationPrice: float | None = None
+    approvalPrice: float | None = None
+    history: list[ApprovalPriceHistoryItem]
+    competitorPrices: list[CompetitorSourcePriceItem]
+    competitorTimeline: list[CompetitorSourcePriceItem]

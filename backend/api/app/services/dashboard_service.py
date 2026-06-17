@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
 from uuid import uuid4
 
@@ -10,13 +10,18 @@ from sqlmodel import Session
 
 from app.services.pricing_service import apply_approval_decision
 from shared.models.dashboard import (
+    ApprovalPriceHistoryItem,
     AiSummary,
     AiSummaryBulletPoint,
+    CompetitorSourcePriceItem,
     CopilotRecommendation,
+    ImpactForecastPoint,
+    ImpactForecastResponse,
     KpiMetrics,
     PricingOpportunity,
     RecommendationInboxItem,
     RecommendationInboxResponse,
+    RecommendationSkuDetail,
     RecommendationSortBy,
     RecommendationSortOrder,
 )
@@ -384,6 +389,36 @@ def get_pricing_opportunities(session: Session) -> list[PricingOpportunity]:
     ]
 
 
+def get_impact_forecast(session: Session, start_date: str | None, end_date: str | None) -> ImpactForecastResponse:
+    period = _resolve_period_window(start_date, end_date)
+    rows = _fetch_recommendation_rows(session, period["start"], period["end"])
+    previous_rows = _fetch_recommendation_rows(session, period["previousStart"], period["previousEnd"])
+
+    revenue_current = float(sum(_decimal_or_zero(row["expected_revenue_impact"]) for row in rows))
+    revenue_previous = float(sum(_decimal_or_zero(row["expected_revenue_impact"]) for row in previous_rows))
+    margin_current = float(_average([_decimal_or_zero(row["margin_pct"]) for row in rows]))
+    margin_previous = float(_average([_decimal_or_zero(row["margin_pct"]) for row in previous_rows]))
+    inventory_current = float(sum(abs(_decimal_or_zero(row["expected_inventory_impact"])) for row in rows if row["recommendation_type"] == "lower"))
+    inventory_previous = float(sum(abs(_decimal_or_zero(row["expected_inventory_impact"])) for row in previous_rows if row["recommendation_type"] == "lower"))
+
+    revenue_growth = _pct_change(revenue_current, revenue_previous)
+    margin_growth = _pct_change(margin_current, margin_previous)
+    inventory_change = _pct_change(inventory_current, inventory_previous)
+
+    week_factors = [0.35, 0.6, 0.82, 1.0]
+    points = [
+        ImpactForecastPoint(
+            week=f"Week {index + 1}",
+            revenue=_clamp(50 + (revenue_growth * factor), 40, 120),
+            margin=_clamp(50 + (margin_growth * factor), 40, 120),
+            inventory=_clamp(50 + ((-inventory_change) * factor), 40, 120),
+        )
+        for index, factor in enumerate(week_factors)
+    ]
+
+    return ImpactForecastResponse(points=points)
+
+
 def get_ai_summary(session: Session) -> AiSummary:
     rows = _fetch_recommendation_rows(session, None, None)
     executive_rows = [row for row in rows if row["recommendation_type"] in EXECUTIVE_TYPES]
@@ -437,15 +472,16 @@ def get_recommendation_inbox(
     sort_order: RecommendationSortOrder,
 ) -> RecommendationInboxResponse:
     rows = _fetch_recommendation_rows(session, start_date, end_date)
+    meta_rows = _filter_rows(rows, tab="all", q=q, confidence=confidence, category=category)
     filtered_rows = _filter_rows(rows, tab=tab, q=q, confidence=confidence, category=category)
     sorted_rows = _sort_rows(filtered_rows, sort_by=sort_by, sort_order=sort_order)
-    counts = Counter(row["recommendation_type"] for row in rows)
+    counts = Counter(row["recommendation_type"] for row in meta_rows)
 
     return RecommendationInboxResponse(
         meta={
-            "total": len(rows),
+            "total": len(meta_rows),
             "counts": {
-                "all": len(rows),
+                "all": len(meta_rows),
                 "raise": counts.get("raise", 0),
                 "lower": counts.get("lower", 0),
                 "promo": counts.get("promo", 0),
@@ -458,28 +494,191 @@ def get_recommendation_inbox(
     )
 
 
-def decide_recommendation(session: Session, recommendation_id: str, decision: str) -> RecommendationInboxItem | None:
-    db_status = _decision_to_db_status(decision)
-    if db_status is None:
-        return None
-
-    row = session.exec(
+def get_recommendation_sku_detail(session: Session, recommendation_id: str) -> RecommendationSkuDetail | None:
+    recommendation = session.exec(
         text(
             """
-            UPDATE price_recommendations
-            SET status = :status, updated_at = NOW()
-            WHERE id = CAST(:recommendation_id AS uuid)
-            RETURNING id
+            SELECT
+                pr.id::text AS recommendation_id,
+                s.id::text AS sku_id,
+                s.name AS sku_name,
+                s.category AS sku_category,
+                s.current_price AS current_price,
+                pr.recommended_price AS recommendation_price,
+                s.approval_price AS approval_price
+            FROM price_recommendations pr
+            JOIN skus s ON s.id = pr.sku_id
+            WHERE pr.id = CAST(:recommendation_id AS uuid)
             """
         ),
-        params={"status": db_status, "recommendation_id": recommendation_id},
-    ).first()
+        params={"recommendation_id": recommendation_id},
+    ).mappings().first()
 
-    if row is None:
+    if recommendation is None:
         return None
 
-    _insert_decision_audit(session, recommendation_id, db_status)
-    session.commit()
+    history_rows = session.exec(
+        text(
+            """
+            SELECT
+                apc.recommendation_id::text AS recommendation_id,
+                apc.old_price,
+                apc.new_price,
+                apc.applied_by,
+                apc.change_reason,
+                apc.applied_at
+            FROM applied_price_changes apc
+            WHERE apc.sku_id = CAST(:sku_id AS uuid)
+            ORDER BY apc.applied_at DESC
+            LIMIT 50
+            """
+        ),
+        params={"sku_id": recommendation["sku_id"]},
+    ).mappings().all()
+
+    competitor_rows = session.exec(
+        text(
+            """
+            WITH latest_source_prices AS (
+                SELECT DISTINCT ON (cp.source)
+                    cp.source,
+                    cp.price,
+                    cp.original_price,
+                    cp.promo_price,
+                    cp.currency,
+                    cp.availability,
+                    cp.stock_status,
+                    cp.url,
+                    cp.crawled_at,
+                    cp.competitor_source_id,
+                    cp.competitor_listing_id
+                FROM competitor_prices cp
+                WHERE cp.sku_id = CAST(:sku_id AS uuid)
+                ORDER BY cp.source, cp.crawled_at DESC
+            )
+            SELECT
+                lsp.source,
+                cs.name AS source_name,
+                cs.base_url,
+                cl.competitor_sku,
+                cl.competitor_product_name,
+                lsp.price,
+                lsp.original_price,
+                lsp.promo_price,
+                lsp.currency,
+                lsp.availability,
+                lsp.stock_status,
+                lsp.url,
+                lsp.crawled_at
+            FROM latest_source_prices lsp
+            LEFT JOIN competitor_sources cs ON cs.id = lsp.competitor_source_id
+            LEFT JOIN competitor_listings cl ON cl.id = lsp.competitor_listing_id
+            ORDER BY lsp.price ASC, lsp.source ASC
+            """
+        ),
+        params={"sku_id": recommendation["sku_id"]},
+    ).mappings().all()
+
+    competitor_timeline_rows = session.exec(
+        text(
+            """
+            SELECT
+                cp.source,
+                cs.name AS source_name,
+                cs.base_url,
+                cl.competitor_sku,
+                cl.competitor_product_name,
+                cp.price,
+                cp.original_price,
+                cp.promo_price,
+                cp.currency,
+                cp.availability,
+                cp.stock_status,
+                cp.url,
+                cp.crawled_at
+            FROM competitor_prices cp
+            LEFT JOIN competitor_sources cs ON cs.id = cp.competitor_source_id
+            LEFT JOIN competitor_listings cl ON cl.id = cp.competitor_listing_id
+            WHERE cp.sku_id = CAST(:sku_id AS uuid)
+            ORDER BY cp.crawled_at DESC, cp.source ASC
+            LIMIT 200
+            """
+        ),
+        params={"sku_id": recommendation["sku_id"]},
+    ).mappings().all()
+
+    return RecommendationSkuDetail(
+        recommendationId=recommendation["recommendation_id"],
+        skuId=recommendation["sku_id"],
+        sku=recommendation["sku_name"],
+        category=recommendation["sku_category"],
+        currentPrice=float(recommendation["current_price"]) if recommendation["current_price"] is not None else None,
+        recommendationPrice=float(recommendation["recommendation_price"]) if recommendation["recommendation_price"] is not None else None,
+        approvalPrice=float(recommendation["approval_price"]) if recommendation["approval_price"] is not None else None,
+        history=[
+            ApprovalPriceHistoryItem(
+                recommendationId=row["recommendation_id"],
+                oldPrice=float(row["old_price"]) if row["old_price"] is not None else None,
+                approvalPrice=float(row["new_price"]),
+                actor=row["applied_by"],
+                reason=row["change_reason"],
+                appliedAt=row["applied_at"].isoformat(),
+            )
+            for row in history_rows
+        ],
+        competitorPrices=[
+            CompetitorSourcePriceItem(
+                sourceCode=row["source"],
+                sourceName=row["source_name"],
+                sourceWebsite=row["base_url"],
+                competitorSku=row["competitor_sku"],
+                competitorProductName=row["competitor_product_name"],
+                price=float(row["price"]),
+                originalPrice=float(row["original_price"]) if row["original_price"] is not None else None,
+                promoPrice=float(row["promo_price"]) if row["promo_price"] is not None else None,
+                currency=row["currency"],
+                availability=row["availability"],
+                stockStatus=row["stock_status"],
+                url=row["url"],
+                crawledAt=row["crawled_at"].isoformat(),
+            )
+            for row in competitor_rows
+        ],
+        competitorTimeline=[
+            CompetitorSourcePriceItem(
+                sourceCode=row["source"],
+                sourceName=row["source_name"],
+                sourceWebsite=row["base_url"],
+                competitorSku=row["competitor_sku"],
+                competitorProductName=row["competitor_product_name"],
+                price=float(row["price"]),
+                originalPrice=float(row["original_price"]) if row["original_price"] is not None else None,
+                promoPrice=float(row["promo_price"]) if row["promo_price"] is not None else None,
+                currency=row["currency"],
+                availability=row["availability"],
+                stockStatus=row["stock_status"],
+                url=row["url"],
+                crawledAt=row["crawled_at"].isoformat(),
+            )
+            for row in competitor_timeline_rows
+        ],
+    )
+
+
+def decide_recommendation(session: Session, recommendation_id: str, decision: str) -> RecommendationInboxItem | None:
+    normalized = decision.strip().lower()
+    if normalized not in {"accept", "reject"}:
+        return None
+
+    updated = apply_approval_decision(
+        session,
+        recommendation_id,
+        "approve" if normalized == "accept" else "reject",
+        actor="dashboard-ui",
+        notes=f"Recommendation {normalized}ed from recommendation inbox",
+    )
+    if updated is None:
+        return None
 
     refreshed = _fetch_recommendation_by_id(session, recommendation_id)
     return _row_to_inbox_item(refreshed) if refreshed else None
@@ -515,8 +714,8 @@ def decide_all_recommendations(
     confidence: str | None,
     category: str | None,
 ) -> list[RecommendationInboxItem] | None:
-    db_status = _decision_to_db_status(decision)
-    if db_status is None:
+    normalized = decision.strip().lower()
+    if normalized not in {"accept", "reject"}:
         return None
 
     rows = _fetch_recommendation_rows(session, None, None)
@@ -524,16 +723,16 @@ def decide_all_recommendations(
     if not matched:
         return []
 
+    decision_type = "approve" if normalized == "accept" else "reject"
     for row in matched:
-        session.exec(
-            text(
-                "UPDATE price_recommendations SET status = :status, updated_at = NOW() WHERE id = CAST(:recommendation_id AS uuid)"
-            ),
-            params={"status": db_status, "recommendation_id": row["id"]},
+        apply_approval_decision(
+            session,
+            row["id"],
+            decision_type,
+            actor="dashboard-ui",
+            notes=f"Recommendation {normalized}ed from recommendation inbox",
         )
-        _insert_decision_audit(session, row["id"], db_status)
 
-    session.commit()
     refreshed = [_fetch_recommendation_by_id(session, row["id"]) for row in matched]
     return [_row_to_inbox_item(row) for row in refreshed if row is not None]
 
@@ -549,6 +748,7 @@ def _fetch_recommendation_rows(session: Session, start_date: str | None, end_dat
             s.name AS sku_name,
             s.category AS sku_category,
             s.current_price AS sku_price,
+            s.approval_price AS approval_price,
             COALESCE((pr.rule_details->>'market_price')::numeric, pc.lowest_competitor_price) AS competitor_price,
             pr.recommendation_type,
             pr.current_price,
@@ -594,6 +794,7 @@ def _fetch_recommendation_by_id(session: Session, recommendation_id: str) -> dic
             s.name AS sku_name,
             s.category AS sku_category,
             s.current_price AS sku_price,
+            s.approval_price AS approval_price,
             COALESCE((pr.rule_details->>'market_price')::numeric, pc.lowest_competitor_price) AS competitor_price,
             pr.recommendation_type,
             pr.current_price,
@@ -710,31 +911,32 @@ def _row_to_inbox_item(row: dict) -> RecommendationInboxItem:
         category=row["sku_category"],
         skuPrice=float(row["sku_price"]) if row.get("sku_price") is not None else None,
         competitorPrice=float(row["competitor_price"]) if row.get("competitor_price") is not None else None,
+        approvalPrice=float(row["approval_price"]) if row.get("approval_price") is not None else None,
         recommendationType=row["recommendation_type"],
-        actionLabel=_build_action_label(row),
+        description=_build_recommendation_description(row),
         impact30d=_build_impact_label(row),
         confidence=(row["confidence_label"] or "Low"),
         status=_db_status_to_api_status(row["status"]),
     )
 
 
-def _build_action_label(row: dict) -> str:
+def _build_recommendation_description(row: dict) -> str:
     recommendation_type = row["recommendation_type"]
     if recommendation_type == "promo":
-        return "Run Promotion"
+        return "Run a promotion to improve sell-through."
     if recommendation_type == "stop":
-        return "Stop Promotion"
+        return "Stop promotion to protect margin."
 
     current_price = _decimal_or_zero(row["current_price"])
     recommended_price = _decimal_or_zero(row["recommended_price"])
     if current_price == 0:
-        return "Hold Price"
+        return "Keep current price (insufficient baseline)."
 
     delta_pct = ((recommended_price - current_price) / current_price) * Decimal("100")
-    rounded_pct = int(delta_pct.quantize(Decimal("1")))
-    prefix = "Raise Price" if recommendation_type == "raise" else "Lower Price"
-    sign = "+" if rounded_pct >= 0 else ""
-    return f"{prefix} {sign}{rounded_pct}%"
+    rounded_pct = abs(int(delta_pct.quantize(Decimal("1"))))
+    if recommendation_type == "raise":
+        return f"Increase selling price by about {rounded_pct}% to align with market opportunity."
+    return f"Decrease selling price by about {rounded_pct}% to stay competitive and improve conversion."
 
 
 def _build_impact_label(row: dict) -> str:
@@ -772,6 +974,67 @@ def _format_signed_currency(value: Decimal) -> str:
 
 def _average(values: list[Decimal]) -> Decimal:
     return sum(values, Decimal("0")) / Decimal(len(values) or 1)
+
+
+def _resolve_period_window(start_date: str | None, end_date: str | None) -> dict[str, str | int]:
+    today = date.today()
+    parsed_start = _parse_iso_date(start_date)
+    parsed_end = _parse_iso_date(end_date)
+
+    end = parsed_end or today
+    start = parsed_start or (end - timedelta(days=7))
+    if start > end:
+        start, end = end, start
+
+    days = (end - start).days + 1
+    previous_end = start - timedelta(days=1)
+    previous_start = previous_end - timedelta(days=days - 1)
+
+    return {
+        "start": start.isoformat(),
+        "end": end.isoformat(),
+        "previousStart": previous_start.isoformat(),
+        "previousEnd": previous_end.isoformat(),
+        "days": days,
+    }
+
+
+def _parse_iso_date(value: str | None) -> date | None:
+    if not value:
+        return None
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        return None
+
+
+def _pct_change(current: float, previous: float) -> float:
+    if previous == 0:
+        if current == 0:
+            return 0.0
+        return 100.0
+    return round(((current - previous) / abs(previous)) * 100, 1)
+
+
+def _count_active_strategy_runs(session: Session, start_date: str, end_date: str) -> int:
+    return session.exec(
+        text(
+            """
+            SELECT COUNT(DISTINCT sr.strategy_id)
+            FROM strategy_runs sr
+            JOIN strategies s ON s.id = sr.strategy_id
+            WHERE s.status = 'active'
+              AND s.is_active = TRUE
+              AND sr.run_started_at::date >= CAST(:start_date AS date)
+              AND sr.run_started_at::date <= CAST(:end_date AS date)
+            """
+        ),
+        params={"start_date": start_date, "end_date": end_date},
+    ).one()[0]
+
+
+def _clamp(value: float, low: float, high: float) -> float:
+    return round(max(low, min(high, value)), 1)
 
 
 def _decimal_or_zero(value: Decimal | float | int | None) -> Decimal:

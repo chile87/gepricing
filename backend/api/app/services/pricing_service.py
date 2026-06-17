@@ -10,6 +10,10 @@ from sqlalchemy import text
 from sqlmodel import Session
 
 from app.services.market_data_service import (
+	DEFAULT_COMPARISON_JSON_PATH,
+	load_comparison_payload,
+	replace_market_data_from_comparison_file,
+	replace_market_data_from_comparison_payload,
 	replace_market_data_from_file,
 	replace_market_data_from_payload,
 )
@@ -33,6 +37,100 @@ def replace_market_data_from_records(
 	refresh_price_comparisons(session)
 	session.commit()
 	return stats
+
+
+def replace_market_data_from_comparison_json_file(
+	session: Session,
+	file_path: str | None = None,
+) -> dict[str, int]:
+	stats = replace_market_data_from_comparison_file(session, file_path)
+	refresh_price_comparisons(session)
+	session.commit()
+	return stats
+
+
+def replace_market_data_from_comparison_records(
+	session: Session,
+	payload: list[dict],
+	source_name: str = "comparison-api-payload",
+) -> dict[str, int]:
+	stats = replace_market_data_from_comparison_payload(session, payload, source_name)
+	refresh_price_comparisons(session)
+	session.commit()
+	return stats
+
+
+def get_comparison_result_insights(
+	file_path: str | None = None,
+	min_confidence: float | None = None,
+	match_type: str | None = None,
+	q: str | None = None,
+	limit: int = 100,
+	offset: int = 0,
+) -> dict:
+	payload = load_comparison_payload(file_path)
+	normalized_rows: list[dict] = []
+
+	for index, row in enumerate(payload):
+		confidence = float(row.get("LLM Confident (%)") or 0)
+		normalized_rows.append(
+			{
+				"index": index,
+				"category": str(row.get("Ngành hàng") or ""),
+				"fptSku": str(row.get("Tên SKU FPT Shop") or ""),
+				"fptPrice": int(row.get("Giá FPT Shop") or 0),
+				"competitor": str(row.get("Tên Đối thủ") or ""),
+				"competitorSku": str(row.get("SKU Đối thủ") or ""),
+				"competitorPrice": int(row.get("Giá Đối thủ") or 0),
+				"difference": int(row.get("Chênh lệch") or 0),
+				"confidence": confidence,
+				"matchType": str(row.get("match_type") or "unknown"),
+			}
+		)
+
+	def row_matches(row: dict) -> bool:
+		if min_confidence is not None and row["confidence"] < min_confidence:
+			return False
+		if match_type and row["matchType"].lower() != match_type.lower():
+			return False
+		if q:
+			needle = q.strip().lower()
+			if needle:
+				haystack = " ".join(
+					[
+						row["fptSku"],
+						row["competitorSku"],
+						row["competitor"],
+						row["category"],
+					]
+				).lower()
+				if needle not in haystack:
+					return False
+		return True
+
+	filtered = [row for row in normalized_rows if row_matches(row)]
+	paginated = filtered[offset : offset + max(1, min(limit, 500))]
+
+	match_type_counts = Counter(row["matchType"] for row in normalized_rows)
+	confidence_buckets = {
+		"100": sum(1 for row in normalized_rows if row["confidence"] == 100.0),
+		"85-99": sum(1 for row in normalized_rows if 85.0 <= row["confidence"] < 100.0),
+		"65-84": sum(1 for row in normalized_rows if 65.0 <= row["confidence"] < 85.0),
+		"below-65": sum(1 for row in normalized_rows if row["confidence"] < 65.0),
+	}
+
+	return {
+		"sourceFile": str(file_path or DEFAULT_COMPARISON_JSON_PATH),
+		"totalRows": len(normalized_rows),
+		"filteredRows": len(filtered),
+		"confidence100Rows": confidence_buckets["100"],
+		"confidenceBuckets": confidence_buckets,
+		"matchTypeCounts": [
+			{"matchType": key, "count": value}
+			for key, value in sorted(match_type_counts.items(), key=lambda item: item[1], reverse=True)
+		],
+		"rows": paginated,
+	}
 
 
 def ensure_price_comparisons_table(session: Session) -> None:
@@ -406,9 +504,9 @@ def apply_approval_decision(
 	)
 	session.exec(
 		text(
-			"UPDATE skus SET current_price = :current_price, updated_at = :updated_at WHERE id = CAST(:sku_id AS uuid)"
+			"UPDATE skus SET approval_price = :approval_price, updated_at = :updated_at WHERE id = CAST(:sku_id AS uuid)"
 		),
-		params={"sku_id": recommendation["sku_id"], "current_price": applied_price, "updated_at": now},
+		params={"sku_id": recommendation["sku_id"], "approval_price": applied_price, "updated_at": now},
 	)
 	_insert_approval_log(session, recommendation_id, "approved", actor, notes or "Recommendation approved", now)
 	_insert_recommendation_event(
@@ -444,6 +542,43 @@ def apply_approval_decision(
 	refresh_price_comparisons(session, [recommendation["sku_id"]])
 	session.commit()
 	return get_recommendation(session, recommendation_id)
+
+
+def reset_approval_prices(
+	session: Session,
+	sku_ids: list[str] | None = None,
+) -> dict[str, int]:
+	if sku_ids is not None and not sku_ids:
+		return {"updated": 0}
+
+	now = datetime.now(timezone.utc)
+	if sku_ids is None:
+		result = session.exec(
+			text(
+				"""
+				UPDATE skus
+				SET approval_price = NULL, updated_at = :updated_at
+				WHERE approval_price IS NOT NULL
+				"""
+			),
+			params={"updated_at": now},
+		)
+		session.commit()
+		return {"updated": result.rowcount or 0}
+
+	result = session.exec(
+		text(
+			"""
+			UPDATE skus
+			SET approval_price = NULL, updated_at = :updated_at
+			WHERE id = ANY(CAST(:sku_ids AS uuid[]))
+			  AND approval_price IS NOT NULL
+			"""
+		),
+		params={"sku_ids": sku_ids, "updated_at": now},
+	)
+	session.commit()
+	return {"updated": result.rowcount or 0}
 
 
 def _insert_approval_log(session: Session, recommendation_id: str, action: str, actor: str, notes: str, acted_at: datetime) -> None:

@@ -16,6 +16,7 @@ class SKU(SQLModel, table=True):
     brand: Optional[str] = Field(None, max_length=128)
     cost_price: float = Field(ge=0.0)
     current_price: float = Field(ge=0.0)
+    approval_price: Optional[float] = Field(default=None, ge=0.0)
     currency: str = Field(default="USD", max_length=8)
     inventory: int = Field(default=0, ge=0)
     reorder_point: int = Field(default=0, ge=0)
@@ -34,6 +35,7 @@ class SKUCreate(SQLModel):
     brand: Optional[str] = None
     cost_price: float
     current_price: float
+    approval_price: Optional[float] = None
     currency: str = "USD"
     inventory: int = 0
     reorder_point: int = 0
@@ -51,6 +53,7 @@ class SKURead(SQLModel):
     brand: Optional[str]
     cost_price: float
     current_price: float
+    approval_price: Optional[float]
     currency: str
     inventory: int
     reorder_point: int
@@ -67,6 +70,7 @@ class SKUUpdate(SQLModel):
     brand: Optional[str] = None
     cost_price: Optional[float] = None
     current_price: Optional[float] = None
+    approval_price: Optional[float] = None
     currency: Optional[str] = None
     inventory: Optional[int] = None
     reorder_point: Optional[int] = None

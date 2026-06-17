@@ -5,7 +5,11 @@ from pydantic import BaseModel
 from sqlmodel import Session
 
 from app.dependencies import get_session
-from app.services.pricing_service import apply_approval_decision, list_pending_approvals
+from app.services.pricing_service import (
+	apply_approval_decision,
+	list_pending_approvals,
+	reset_approval_prices,
+)
 
 router = APIRouter(tags=["approvals"])
 
@@ -14,6 +18,10 @@ class ApprovalRequest(BaseModel):
 	actor: str = "admin"
 	notes: str | None = None
 	customPrice: float | None = None
+
+
+class ResetApprovalPriceRequest(BaseModel):
+	skuIds: list[str] | None = None
 
 
 @router.get("/approvals/pending")
@@ -64,3 +72,11 @@ def custom_price_approval(
 	if item is None:
 		raise HTTPException(status_code=404, detail="recommendation not found")
 	return item
+
+
+@router.post("/approvals/reset-approval-price")
+def reset_sku_approval_price(
+	payload: ResetApprovalPriceRequest,
+	session: Session = Depends(get_session),
+) -> dict[str, int]:
+	return reset_approval_prices(session, payload.skuIds)

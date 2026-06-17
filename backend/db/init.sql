@@ -106,6 +106,7 @@ CREATE TABLE IF NOT EXISTS skus (
     brand               VARCHAR(128),
     cost_price          NUMERIC(14, 2) NOT NULL,
     current_price       NUMERIC(14, 2) NOT NULL,
+    approval_price      NUMERIC(14, 2),
     currency            VARCHAR(8) NOT NULL DEFAULT 'USD',
     inventory           INTEGER NOT NULL DEFAULT 0,
     reorder_point       INTEGER NOT NULL DEFAULT 0,

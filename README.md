@@ -52,12 +52,7 @@
 
 ---
 
-## Local Development Prerequisites
-
-Before starting, ensure you have installed:
-
-1. **Python 3.11+** → `python --version`
-# GePricing
+## Overview
 
 GePricing is a pricing workflow system built around this runtime flow:
 
@@ -74,7 +69,7 @@ Competitor Sites
     -> backend/crawlPrice/crawl_mobile.py
     -> backend/crawler/main.py
     -> mobile_data.json
-    -> Importer in backend/api/app/services/pricing_service.py
+    -> Importer in backend/api/app/services/market_data_service.py
     -> PostgreSQL tables:
              categories
              competitor_sources
@@ -100,8 +95,8 @@ Competitor Sites
 
 ### Importer and Persistence
 
-- `backend/api/app/services/pricing_service.py`
-    Contains the importer that replaces market data from `mobile_data.json` into PostgreSQL.
+- `backend/api/app/services/market_data_service.py`
+    Contains importer logic for mobile/comparison payloads and upsert-based persistence into PostgreSQL.
 
 ### Rule Engine
 
@@ -142,13 +137,14 @@ Refresh competitor and SKU market context from crawler JSON.
 Flow:
 
 1. Run crawler to generate `backend/crawlPrice/mobile_data.json`.
-2. Call importer to replace current market dataset in PostgreSQL.
+2. Call importer to upsert market dataset in PostgreSQL.
 3. Persist SKU, competitor listing, competitor price, inventory snapshot, and sales metric rows.
 
 Code path:
 
 - `backend/crawlPrice/crawl_mobile.py`
 - `backend/crawler/main.py`
+- `backend/api/app/services/market_data_service.py::replace_market_data_from_payload`
 - `backend/api/app/services/pricing_service.py::replace_market_data_from_mobile_file`
 
 ### Use Case 2: Generate Recommendations
@@ -181,7 +177,7 @@ Flow:
 
 1. Frontend requests `/api/v1/recommendations/inbox`.
 2. Backend reads `price_recommendations` and SKU/competitor context.
-3. API returns SKU, category, sku price, competitor price, action label, gap, and confidence.
+3. API returns SKU, category, sku price, competitor price, description, gap, and confidence.
 
 Code path:
 
@@ -265,7 +261,141 @@ curl -X POST http://localhost:8000/api/v1/pricing/pipeline/mobile \
 
 ## Current Limitation
 
-The system currently uses `mobile_data.json` as the main imported market feed. The architecture is now aligned with the attached flow, but LLM semantic product matching and `price_comparisons` materialization are represented through rule details and pipeline orchestration rather than a separate persisted `price_comparisons` table.
+The system currently uses `mobile_data.json` or `comparison_result.json` as the imported market feed. Product matching confidence in `comparison_result.json` is accepted into competitor tables only when `LLM Confident (%) == 100.0`.
+
+## Detailed Pipeline Diagrams (Crawler -> LLM -> Importer -> Tables)
+
+Note: Importer flow is now UPSERT-based for master entities (no full-table truncate).
+
+### 1) Sequence Diagram
+
+```mermaid
+sequenceDiagram
+        autonumber
+        participant S as Scheduler/User
+        participant C as Crawler (crawl_mobile.py)
+        participant F as Firecrawl Extract
+        participant G as Gemini Normalize (optional)
+        participant I as Importer (market_data_service)
+        participant D as PostgreSQL
+        participant P as Pricing Service
+        participant E as Pricing Engine
+
+        S->>C: Run crawl job or API pipeline
+        C->>F: Extract products (dong_may, ram, rom, gia_ban, store)
+        F-->>C: mobile_data.json
+        C->>G: Optional semantic normalization
+        G-->>C: normalized mobile_data.json
+        C->>I: replace_market_data_from_payload / from_file
+        I->>D: UPSERT categories, competitor_sources, skus, competitor_listings
+        I->>D: INSERT crawler_runs, competitor_prices (history)
+        I->>D: INSERT inventory_snapshots, sales_metrics_hourly (time-series)
+        I->>D: UPDATE crawler_runs.items_found
+
+        P->>D: refresh_price_comparisons()
+        D-->>P: lowest/avg/highest competitor prices per SKU
+        P->>E: recommend(candidate)
+        E-->>P: recommendation_type + recommended_price
+        P->>D: INSERT strategies, strategy_runs, price_recommendations
+```
+
+### 2) Comparison JSON Branch (confidence gate)
+
+```mermaid
+flowchart TD
+        A[comparison_result.json] --> B[Importer: replace_market_data_from_comparison_payload]
+    B --> B2[UPSERT categories/sources/skus/listings]
+        B --> C{LLM Confident (%) == 100?}
+        C -- No --> D[Skip competitor_listings/competitor_prices insert]
+        C -- Yes --> E[Insert competitor_sources if needed]
+        E --> F[Insert competitor_listings]
+        F --> G[Insert competitor_prices]
+        G --> H[refresh_price_comparisons]
+        H --> I[generate_recommendations]
+        D --> H
+```
+
+### 3) Engine Rule Flow
+
+```mermaid
+flowchart LR
+        A[PricingCandidate from skus + price_comparisons] --> B[CompetitorRule]
+        B -->|no decision| C[InventoryRule]
+        B -->|decision| D[MarginRule]
+        C -->|decision| D
+        C -->|no decision| X[No recommendation]
+        D --> E[Guardrails]
+        E -->|valid| F[Persist price_recommendations]
+        E -->|invalid/loss-making| X
+```
+
+## Inserted Tables by Importer
+
+UPSERT tables:
+
+1. categories
+2. competitor_sources
+3. skus
+4. competitor_listings
+
+Append/history tables:
+
+1. crawler_runs
+2. competitor_prices
+3. inventory_snapshots
+4. sales_metrics_hourly
+
+Then pricing service computes/inserts:
+
+1. price_comparisons
+2. strategies
+3. strategy_runs
+4. price_recommendations
+
+## Core Formulas
+
+### A) Price comparison formulas
+
+From latest price per source (DISTINCT ON sku_id, source by crawled_at desc):
+
+- `lowest_competitor_price = MIN(price)`
+- `average_competitor_price = AVG(price)`
+- `highest_competitor_price = MAX(price)`
+- `competitor_count = COUNT(price)`
+- `price_gap_value = lowest_competitor_price - current_price`
+- `price_gap_pct = ((lowest_competitor_price - current_price) / current_price) * 100`
+
+### B) Competitor rule formulas
+
+- Lower trigger: `market_price <= current_price * 0.98`
+- Raise trigger: `market_price >= current_price * 1.03`
+- Lower recommendation: `max(cost_price * 1.05, market_price * 0.995)`
+- Raise recommendation: `min(market_price * 0.99, current_price * 1.08)`
+
+### C) Inventory fallback formulas
+
+- High inventory lower: `max(cost_price * 1.05, current_price * 0.97)`
+- Tight inventory raise: `current_price * 1.03`
+
+### D) Margin + guardrails
+
+- Margin floor minimum: `min_allowed_price = cost_price * (1 + floor)`
+- Guardrail clamp bounds:
+    - `min = current_price * (1 - 0.08)`
+    - `max = current_price * (1 + 0.08)`
+- Drop decision if `recommended_price <= cost_price`
+
+### E) Recommendation impact formulas
+
+- `delta = recommended_price - current_price`
+- `expected_revenue_impact = delta * max(inventory, 1) * 0.35`
+- `expected_margin_impact = (recommended_price - cost_price) * max(inventory, 1) * 0.22`
+- If `recommendation_type == lower`:
+    - `expected_inventory_impact = 8 + abs(delta / current_price) * 100`
+- Else:
+    - `expected_inventory_impact = -(4 + abs(delta / current_price) * 40)`
+- `margin_pct = ((recommended_price - cost_price) / max(recommended_price, 1)) * 100`
+
 ### Stop All Processes
 ```bash
 # Terminal #1, #2, #3: Press CTRL+C
@@ -393,7 +523,7 @@ lsof -i :8000
 kill -9 PID
 
 # Or use a different port:
-uvicorn main:app --reload --port 8001
+uvicorn main:app --reload --port 8000
 ```
 
 ### ModuleNotFoundError in Crawler
