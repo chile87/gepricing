@@ -6,6 +6,7 @@ Ho tro pagination (trang 1-5) hoac crawl mode (max 50 trang).
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 import time
@@ -16,7 +17,7 @@ from typing import Any, Callable
 import requests
 from tqdm import tqdm
 
-FIRECRAWL_API_KEY = "YOUR_FIRECRAWL_API_KEY"
+FIRECRAWL_API_KEY = os.getenv("FIRECRAWL_API_KEY", "YOUR_FIRECRAWL_API_KEY")
 FIRECRAWL_BASE_URL = "https://api.firecrawl.dev/v2"
 
 MAX_PAGES = 5

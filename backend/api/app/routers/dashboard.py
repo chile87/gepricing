@@ -1,13 +1,30 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
+from sqlmodel import Session
 
+from app.dependencies import get_session
+from app.services.dashboard_service import (
+    build_copilot_response,
+    customize_recommendation as customize_recommendation_service,
+    decide_all_recommendations as decide_all_recommendations_service,
+    decide_recommendation as decide_recommendation_service,
+    get_ai_summary as get_ai_summary_service,
+    get_dashboard_kpis as get_dashboard_kpis_service,
+    get_pricing_opportunities as get_pricing_opportunities_service,
+    get_recommendation_inbox as get_recommendation_inbox_service,
+)
 from shared.models.dashboard import (
     AiSummary,
     CopilotRecommendation,
     KpiMetrics,
     PricingOpportunity,
+    RecommendationInboxItem,
+    RecommendationInboxResponse,
+    RecommendationSortBy,
+    RecommendationSortOrder,
+    RecommendationType,
 )
 
 router = APIRouter(tags=["dashboard"])
@@ -22,122 +39,126 @@ class CopilotChatResponse(BaseModel):
     recommendations: list[CopilotRecommendation]
 
 
-MOCK_KPIS = KpiMetrics(
-    revenueOpportunity={
-        "title": "Revenue Opportunity",
-        "displayValue": "+$1.5M",
-        "numericValue": 1500000,
-        "change": {
-            "percentage": 8.7,
-            "isPositive": True,
-            "periodLabel": "vs last week",
-        },
-    },
-    marginOpportunity={
-        "title": "Margin Opportunity",
-        "displayValue": "+3.8%",
-        "numericValue": 3.8,
-        "change": {
-            "percentage": 2.1,
-            "isPositive": True,
-            "periodLabel": "vs last week",
-        },
-    },
-    promoWasteSaving={
-        "title": "Promo Waste Saving",
-        "displayValue": "+$420K",
-        "numericValue": 420000,
-        "change": {
-            "percentage": 12.3,
-            "isPositive": True,
-            "periodLabel": "vs last week",
-        },
-    },
-    overstockRisk={
-        "title": "Overstock Risk",
-        "displayValue": "124",
-        "numericValue": 124,
-        "unit": "SKUs",
-        "change": {
-            "percentage": 18,
-            "isPositive": False,
-            "periodLabel": "vs last week",
-        },
-    },
-    activeStrategies={
-        "title": "Active Strategies",
-        "displayValue": "12",
-        "numericValue": 12,
-        "change": {
-            "value": 2,
-            "isPositive": True,
-            "periodLabel": "vs last week",
-        },
-    },
-)
+class RecommendationDecisionRequest(BaseModel):
+    decision: str
 
-MOCK_OPPORTUNITIES: list[PricingOpportunity] = [
-    PricingOpportunity(action="Raise Price", skuCount=47, percentage=32),
-    PricingOpportunity(action="Lower Price", skuCount=38, percentage=27),
-    PricingOpportunity(action="Promotional Action", skuCount=34, percentage=24),
-    PricingOpportunity(action="Stop Promotion", skuCount=24, percentage=17),
-]
 
-MOCK_AI_SUMMARY = AiSummary(
-    overview=(
-        "Our AI engine analyzed 8,352 SKUs and identified 143 pricing actions "
-        "with a total potential revenue uplift of $1.2M and margin improvement of 3.8%."
-    ),
-    bulletPoints=[
-        {"text": "47 SKUs can increase price with low elasticity", "color": "#4d7fff"},
-        {"text": "38 SKUs need price reduction to clear inventory", "color": "#22c8a0"},
-        {"text": "34 SKUs need targeted promotion", "color": "#f5a623"},
-        {"text": "24 SKU promotions are not performing", "color": "#e879c7"},
-    ],
-)
+class BulkRecommendationDecisionRequest(BaseModel):
+    decision: str
+    tab: RecommendationType | str = "all"
+    q: str | None = None
+    confidence: str | None = None
+    category: str | None = None
 
-MOCK_COPILOT_RECOMMENDATIONS: list[CopilotRecommendation] = [
-    CopilotRecommendation(
-        rank=1,
-        recommendation="Increase price for 24 low-elasticity SKUs",
-        estimatedImpact="$180K",
-    ),
-    CopilotRecommendation(
-        rank=2,
-        recommendation="Stop promotion on 18 low-ROI SKUs",
-        estimatedImpact="$62K",
-    ),
-    CopilotRecommendation(
-        rank=3,
-        recommendation="Focus promotion on price-sensitive customers",
-        estimatedImpact="$38K",
-    ),
-]
+
+class CustomRecommendationRequest(BaseModel):
+    customPrice: float
+    notes: str | None = None
+    actor: str = "dashboard-ui"
 
 
 @router.get("/dashboard/kpis", response_model=KpiMetrics)
 def get_dashboard_kpis(
     startDate: str | None = Query(default=None),
     endDate: str | None = Query(default=None),
+    session: Session = Depends(get_session),
 ) -> KpiMetrics:
-    _ = (startDate, endDate)
-    return MOCK_KPIS
+    return get_dashboard_kpis_service(session, startDate, endDate)
 
 
 @router.get("/dashboard/opportunities", response_model=list[PricingOpportunity])
-def get_pricing_opportunities() -> list[PricingOpportunity]:
-    return MOCK_OPPORTUNITIES
+def get_pricing_opportunities(session: Session = Depends(get_session)) -> list[PricingOpportunity]:
+    return get_pricing_opportunities_service(session)
 
 
 @router.get("/dashboard/summary", response_model=AiSummary)
-def get_ai_summary() -> AiSummary:
-    return MOCK_AI_SUMMARY
+def get_ai_summary(session: Session = Depends(get_session)) -> AiSummary:
+    return get_ai_summary_service(session)
 
 
 @router.post("/copilot/chat", response_model=CopilotChatResponse)
-def copilot_chat(payload: CopilotChatRequest) -> CopilotChatResponse:
-    _ = payload.message
+def copilot_chat(
+    payload: CopilotChatRequest,
+    session: Session = Depends(get_session),
+) -> CopilotChatResponse:
+    reply, recommendations = build_copilot_response(session, payload.message)
     return CopilotChatResponse(
-        reply="Electronics margin is mainly impacted by high promotions and low price realization.",
-        recommendations=MOCK_COPILOT_RECOMMENDATIONS,
+        reply=reply,
+        recommendations=recommendations,
     )
+
+
+@router.get("/recommendations/inbox", response_model=RecommendationInboxResponse)
+def get_recommendation_inbox(
+    startDate: str = Query(default="2026-06-10"),
+    endDate: str = Query(default="2026-06-17"),
+    tab: str = Query(default="all"),
+    q: str | None = Query(default=None),
+    confidence: str | None = Query(default="all"),
+    category: str | None = Query(default=None),
+    sortBy: RecommendationSortBy = Query(default="impact"),
+    sortOrder: RecommendationSortOrder = Query(default="desc"),
+    session: Session = Depends(get_session),
+) -> RecommendationInboxResponse:
+    return get_recommendation_inbox_service(
+        session=session,
+        start_date=startDate,
+        end_date=endDate,
+        tab=tab,
+        q=q,
+        confidence=confidence,
+        category=category,
+        sort_by=sortBy,
+        sort_order=sortOrder,
+    )
+
+
+@router.post("/recommendations/inbox/{recommendation_id}/decision", response_model=RecommendationInboxItem)
+def decide_recommendation(
+    recommendation_id: str,
+    payload: RecommendationDecisionRequest,
+    session: Session = Depends(get_session),
+) -> RecommendationInboxItem:
+    item = decide_recommendation_service(session, recommendation_id, payload.decision)
+    if item is None:
+        normalized = payload.decision.strip().lower()
+        if normalized not in {"accept", "reject"}:
+            raise HTTPException(status_code=400, detail="decision must be 'accept' or 'reject'")
+        raise HTTPException(status_code=404, detail=f"recommendation '{recommendation_id}' not found")
+    return item
+
+
+@router.post("/recommendations/inbox/{recommendation_id}/custom", response_model=RecommendationInboxItem)
+def customize_recommendation(
+    recommendation_id: str,
+    payload: CustomRecommendationRequest,
+    session: Session = Depends(get_session),
+) -> RecommendationInboxItem:
+    item = customize_recommendation_service(
+        session,
+        recommendation_id,
+        payload.customPrice,
+        notes=payload.notes,
+        actor=payload.actor,
+    )
+    if item is None:
+        raise HTTPException(status_code=404, detail=f"recommendation '{recommendation_id}' not found")
+    return item
+
+
+@router.post("/recommendations/inbox/decision-all", response_model=list[RecommendationInboxItem])
+def decide_all_recommendations(
+    payload: BulkRecommendationDecisionRequest,
+    session: Session = Depends(get_session),
+) -> list[RecommendationInboxItem]:
+    items = decide_all_recommendations_service(
+        session=session,
+        decision=payload.decision,
+        tab=payload.tab,
+        q=payload.q,
+        confidence=payload.confidence,
+        category=payload.category,
+    )
+    if items is None:
+        raise HTTPException(status_code=400, detail="decision must be 'accept' or 'reject'")
+    return items

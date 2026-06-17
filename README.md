@@ -57,229 +57,215 @@
 Before starting, ensure you have installed:
 
 1. **Python 3.11+** → `python --version`
-2. **Node.js 20+** → `node --version`
-3. **PostgreSQL 16+** → `psql --version`
-4. **Redis** → `redis-cli --version`
+# GePricing
 
-If using macOS with Homebrew:
-```bash
-brew install python@3.11
-brew install node
-brew install postgresql
-brew install redis
+GePricing is a pricing workflow system built around this runtime flow:
+
+1. Competitor sites are crawled into JSON.
+2. A DB importer validates and loads JSON into PostgreSQL.
+3. A rule engine reads market and inventory data.
+4. Price recommendations are generated and persisted.
+5. An admin dashboard reviews, approves, customizes, or rejects recommendations.
+
+## Implemented Flow
+
+```text
+Competitor Sites
+    -> backend/crawlPrice/crawl_mobile.py
+    -> backend/crawler/main.py
+    -> mobile_data.json
+    -> Importer in backend/api/app/services/pricing_service.py
+    -> PostgreSQL tables:
+             categories
+             competitor_sources
+             skus
+             competitor_listings
+             competitor_prices
+             inventory_snapshots
+             sales_metrics_hourly
+    -> Rule Engine in backend/engine/
+    -> price_recommendations
+    -> Approval APIs
+    -> Frontend Recommendation Inbox / Dashboard
 ```
 
----
+## Code Structure
 
-## Step-by-Step Setup & Local Development
+### Data Collection
 
-### 1️⃣ Start PostgreSQL & Redis (In Background)
+- `backend/crawlPrice/crawl_mobile.py`
+    Scrapes competitor mobile listings and saves `mobile_data.json`.
+- `backend/crawler/main.py`
+    Scheduler entrypoint. Runs crawler, imports JSON, then triggers recommendation generation.
 
-#### Start PostgreSQL
-```bash
-# macOS (Homebrew)
-brew services start postgresql
+### Importer and Persistence
 
-# Or manually:
-postgres -D /usr/local/var/postgres &
-```
+- `backend/api/app/services/pricing_service.py`
+    Contains the importer that replaces market data from `mobile_data.json` into PostgreSQL.
 
-#### Start Redis
-```bash
-# macOS (Homebrew)
-brew services start redis
+### Rule Engine
 
-# Or manually:
-redis-server &
-```
+- `backend/engine/engine.py`
+    Orchestrates pricing rules.
+- `backend/engine/rules/competitor_rule.py`
+    Market-gap rule.
+- `backend/engine/rules/inventory_rule.py`
+    Inventory fallback rule.
+- `backend/engine/rules/margin_rule.py`
+    Margin floor enforcement.
+- `backend/engine/rules/guardrails.py`
+    Final clamping and rejection guardrails.
 
-**Verify connections:**
-```bash
-psql -d postgres -c "SELECT version();"
-redis-cli ping  # Should print: PONG
-```
+### API Layer
 
----
+- `backend/api/app/routers/dashboard.py`
+    Dashboard KPIs, AI summary, recommendation inbox, bulk decisions.
+- `backend/api/app/routers/pricing.py`
+    Import mobile data, run pricing pipeline, list recommendations.
+- `backend/api/app/routers/approvals.py`
+    Pending approvals, approve, reject, custom-price approval.
 
-### 2️⃣ Configure Environment Variables
+### Frontend
 
-```bash
-# In the project root
-cp .env.example .env
-```
+- `frontend/src/App.jsx`
+    Dashboard, inbox, and approval-oriented UI.
+- `frontend/src/api/dashboardClient.ts`
+    Frontend API client for dashboard and recommendation inbox.
 
-Edit `.env` and update these for local PostgreSQL/Redis:
-```bash
-# ── PostgreSQL ─────────────────────────
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres          # or your PostgreSQL password
-POSTGRES_DB=gepricing_db
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
+## Main Use Cases
 
-DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/gepricing_db
-DATABASE_URL_SYNC=postgresql+psycopg2://postgres:postgres@localhost:5432/gepricing_db
+### Use Case 1: Crawl and Import Market Data
 
-# ── Redis ──────────────────────────────
-REDIS_HOST=localhost
-REDIS_PORT=6379
-REDIS_DB=0
-REDIS_URL=redis://localhost:6379/0
+Goal:
+Refresh competitor and SKU market context from crawler JSON.
 
-# ── API ────────────────────────────────
-SECRET_KEY=your-secret-key-change-this-in-production
-ENVIRONMENT=development
-API_PORT=8000
+Flow:
 
-# ── Frontend ───────────────────────────
-VITE_API_URL=http://localhost:8000
-```
+1. Run crawler to generate `backend/crawlPrice/mobile_data.json`.
+2. Call importer to replace current market dataset in PostgreSQL.
+3. Persist SKU, competitor listing, competitor price, inventory snapshot, and sales metric rows.
 
----
+Code path:
 
-### 3️⃣ Create PostgreSQL Database
+- `backend/crawlPrice/crawl_mobile.py`
+- `backend/crawler/main.py`
+- `backend/api/app/services/pricing_service.py::replace_market_data_from_mobile_file`
 
-```bash
-# Connect to PostgreSQL as superuser
-psql -U postgres -h localhost
+### Use Case 2: Generate Recommendations
 
-# Inside psql:
-CREATE DATABASE gepricing_db;
-\q
-```
+Goal:
+Build `price_recommendations` from imported market data.
 
-Verify the database was created:
-```bash
-psql -U postgres -d gepricing_db -c "SELECT 1;"
-```
+Flow:
 
----
+1. Query SKU current price, cost, inventory, and latest competitor prices.
+2. Build price comparison candidates.
+3. Run competitor rule.
+4. Fallback to inventory rule if no market-gap rule fires.
+5. Apply margin floor.
+6. Apply final guardrails.
+7. Persist recommendations with rationale and rule details.
 
-### 4️⃣ Backend Setup — Python Virtual Environment
+Code path:
 
-Open **Terminal #1** for the FastAPI server:
+- `backend/api/app/services/pricing_service.py::build_price_comparisons`
+- `backend/engine/engine.py`
+- `backend/api/app/services/pricing_service.py::generate_recommendations`
+
+### Use Case 3: Review Recommendations in Admin Dashboard
+
+Goal:
+Allow pricing admins to inspect recommendation rows in the inbox.
+
+Flow:
+
+1. Frontend requests `/api/v1/recommendations/inbox`.
+2. Backend reads `price_recommendations` and SKU/competitor context.
+3. API returns SKU, category, sku price, competitor price, action label, gap, and confidence.
+
+Code path:
+
+- `backend/api/app/routers/dashboard.py`
+- `backend/api/app/services/dashboard_service.py`
+- `frontend/src/App.jsx`
+
+### Use Case 4: Approve, Reject, or Override Price
+
+Goal:
+Let admins push accepted prices back into `skus.current_price` and track audit history.
+
+Flow:
+
+1. Admin opens pending recommendations.
+2. Admin approves, rejects, or sends a custom price.
+3. Backend updates recommendation status.
+4. If approved/custom, backend updates `skus.current_price`.
+5. Backend writes `approval_log`, `recommendation_events`, and `applied_price_changes`.
+
+Code path:
+
+- `backend/api/app/routers/approvals.py`
+- `backend/api/app/services/pricing_service.py::apply_approval_decision`
+
+## Important Endpoints
+
+### Pipeline
+
+- `POST /api/v1/pricing/import-mobile-data`
+- `POST /api/v1/pricing/generate`
+- `POST /api/v1/pricing/pipeline/mobile`
+
+### Recommendation Read APIs
+
+- `GET /api/v1/pricing/recommendations`
+- `GET /api/v1/pricing/recommendations/{recommendation_id}`
+- `GET /api/v1/recommendations/inbox`
+
+### Approval APIs
+
+- `GET /api/v1/approvals/pending`
+- `POST /api/v1/approvals/{recommendation_id}/approve`
+- `POST /api/v1/approvals/{recommendation_id}/reject`
+- `POST /api/v1/approvals/{recommendation_id}/custom`
+
+## Local Run
+
+### Backend API
 
 ```bash
 cd backend/api
-
-# Create virtual environment
-python3.11 -m venv .venv
-
-# Activate it
-source .venv/bin/activate          # macOS / Linux
-# OR on Windows:
-# .venv\Scripts\activate
-
-# Upgrade pip & install dependencies
-pip install --upgrade pip
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
-
-# Verify installation
-pip list | grep -E "fastapi|sqlmodel|alembic"
-```
-
----
-
-### 5️⃣ Run Database Migrations
-
-Still in **Terminal #1**:
-
-```bash
-# Make sure you're in backend/api with venv activated
-cd ../..  # Back to project root
-cd backend
-
-# Run Alembic migrations (creates tables in PostgreSQL)
-alembic upgrade head
-
-# Verify tables were created
-psql -U postgres -d gepricing_db -c "\dt"
-# Should show: skus, competitor_prices, price_recommendations, approval_log
-```
-
----
-
-### 6️⃣ Start FastAPI Server
-
-Still in **Terminal #1**, from `backend/api` with venv activated:
-
-```bash
-cd backend/api
-source .venv/bin/activate  # if not already activated
-
-# Start the development server
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
-
-# Output should show:
-# INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-# INFO:     Started server process [XXXX]
-# INFO:     Waiting for application startup.
 ```
 
-**Test the API is running:**
-- Open browser: `http://localhost:8000/docs` (Swagger UI)
-- Or: `http://localhost:8000/redoc` (ReDoc)
-
----
-
-### 7️⃣ Frontend Setup — Node.js
-
-Open **Terminal #2** for the frontend:
+### Frontend
 
 ```bash
 cd frontend
-
-# Install dependencies
 npm install
-
-# Start Vite dev server
 npm run dev
-
-# Output should show:
-# Local:   http://localhost:5173/
-# press h + enter to show help
 ```
 
-**Open in browser:** `http://localhost:5173`
-
----
-
-### 8️⃣ Crawler Setup — Background Python Process
-
-Open **Terminal #3** for the crawler:
+### Scheduled Crawler + Pipeline
 
 ```bash
 cd backend/crawler
-
-# Create/activate virtual environment (same as API)
-python3.11 -m venv .venv
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Start the crawler
-python main.py
-
-# Crawler will run and fetch competitor prices every 30 minutes
+python3 main.py
 ```
 
----
+### One-shot Pipeline via API
 
-## Summary: Terminal Layout
+```bash
+curl -X POST http://localhost:8000/api/v1/pricing/pipeline/mobile \
+    -H "Content-Type: application/json" \
+    -d '{}'
+```
 
-When everything is running, you should have **3 terminals open**:
+## Current Limitation
 
-| Terminal | Command                              | Port | Status Indicator                  |
-|----------|--------------------------------------|------|-----------------------------------|
-| #1       | `cd backend/api && source .venv/bin/activate && uvicorn main:app --reload` | 8000 | `http://0.0.0.0:8000 (Press CTRL+C to quit)` |
-| #2       | `cd frontend && npm run dev`         | 5173 | `Local: http://localhost:5173/`   |
-| #3       | `cd backend/crawler && source .venv/bin/activate && python main.py` | —    | `Crawler running, next sync: XX:XX` |
-
----
-
-## Useful Commands
-
+The system currently uses `mobile_data.json` as the main imported market feed. The architecture is now aligned with the attached flow, but LLM semantic product matching and `price_comparisons` materialization are represented through rule details and pipeline orchestration rather than a separate persisted `price_comparisons` table.
 ### Stop All Processes
 ```bash
 # Terminal #1, #2, #3: Press CTRL+C

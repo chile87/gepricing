@@ -56,3 +56,36 @@ class CopilotRecommendation(BaseModel):
     rank: int
     recommendation: str
     estimatedImpact: str
+
+
+RecommendationType = Literal["raise", "lower", "promo", "stop"]
+RecommendationConfidence = Literal["High", "Medium", "Low"]
+RecommendationStatus = Literal["pending", "accepted", "rejected"]
+RecommendationDecision = Literal["accept", "reject"]
+RecommendationSortBy = Literal["impact", "sku", "confidence"]
+RecommendationSortOrder = Literal["asc", "desc"]
+
+
+class RecommendationInboxItem(BaseModel):
+    id: str
+    sku: str
+    category: str
+    skuPrice: float | None = None
+    competitorPrice: float | None = None
+    recommendationType: RecommendationType
+    actionLabel: str
+    impact30d: str
+    confidence: RecommendationConfidence
+    status: RecommendationStatus = "pending"
+
+
+class RecommendationInboxMeta(BaseModel):
+    total: int
+    counts: dict[str, int]
+    startDate: str
+    endDate: str
+
+
+class RecommendationInboxResponse(BaseModel):
+    meta: RecommendationInboxMeta
+    items: list[RecommendationInboxItem]
