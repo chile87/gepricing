@@ -1,10 +1,26 @@
 [
   {
     "nganh_hang": "Laptop",
+    "dong_may_goc": "ASUS VivoBook 14",
+    "cau_hinh_chi_tiet": "X1407CA-LY008W",
+    "mau_sac": null,
+    "gia_ban": 21890000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
     "dong_may_goc": "ASUS VivoBook 14 X1407CA-LY008W",
     "cau_hinh_chi_tiet": null,
     "mau_sac": null,
     "gia_ban": 21890000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "ASUS Vivobook 14",
+    "cau_hinh_chi_tiet": "X1404VA-EB355W",
+    "mau_sac": null,
+    "gia_ban": 21690000,
     "ten_cua_hang": "CellphoneS"
   },
   {
@@ -17,10 +33,34 @@
   },
   {
     "nganh_hang": "Laptop",
+    "dong_may_goc": "ASUS Vivobook S 14 FLIP",
+    "cau_hinh_chi_tiet": "TP3402VA-LZ632W",
+    "mau_sac": null,
+    "gia_ban": 20990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "ASUS Vivobook S14",
+    "cau_hinh_chi_tiet": "M3407HA-SF490W",
+    "mau_sac": null,
+    "gia_ban": 24890000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
     "dong_may_goc": "ASUS Vivobook S14 M3407HA-SF490W",
     "cau_hinh_chi_tiet": null,
     "mau_sac": null,
     "gia_ban": 24890000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "ASUS ZenBook 14",
+    "cau_hinh_chi_tiet": "UX3405CA-ST628W",
+    "mau_sac": null,
+    "gia_ban": 28990000,
     "ten_cua_hang": "CellphoneS"
   },
   {
@@ -33,10 +73,26 @@
   },
   {
     "nganh_hang": "Laptop",
+    "dong_may_goc": "Acer Aspire Lite 16 GEN 2",
+    "cau_hinh_chi_tiet": "AL16-52P-76DU",
+    "mau_sac": null,
+    "gia_ban": 19290000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
     "dong_may_goc": "Acer Aspire Lite 16 GEN 2 AL16-52P-76DU",
     "cau_hinh_chi_tiet": null,
     "mau_sac": null,
     "gia_ban": 19290000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Acer Gaming Aspire 7",
+    "cau_hinh_chi_tiet": "A715-59G-57TU",
+    "mau_sac": null,
+    "gia_ban": 21490000,
     "ten_cua_hang": "CellphoneS"
   },
   {
@@ -49,8 +105,152 @@
   },
   {
     "nganh_hang": "Laptop",
+    "dong_may_goc": "Dell 14",
+    "cau_hinh_chi_tiet": "DC14255 R7165W11SLU",
+    "mau_sac": null,
+    "gia_ban": 26490000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
     "dong_may_goc": "Dell 14 DC14255 R7165W11SLU",
     "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 26990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "HP Omnibook 5 AI 16",
+    "cau_hinh_chi_tiet": "AF1048TU BZ7Q9PA",
+    "mau_sac": null,
+    "gia_ban": 25690000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "HP Omnibook X Flip 14",
+    "cau_hinh_chi_tiet": "FK0092AU BZ7P5PA",
+    "mau_sac": null,
+    "gia_ban": 29990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Laptop ASUS VivoBook 14",
+    "cau_hinh_chi_tiet": "X1407CA-LY008W",
+    "mau_sac": null,
+    "gia_ban": 21890000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Laptop ASUS Vivobook 14",
+    "cau_hinh_chi_tiet": "X1404VA-EB355W",
+    "mau_sac": null,
+    "gia_ban": 21690000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Laptop ASUS Vivobook S 14 FLIP",
+    "cau_hinh_chi_tiet": "TP3402VA-LZ632W",
+    "mau_sac": null,
+    "gia_ban": 20990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Laptop ASUS Vivobook S14",
+    "cau_hinh_chi_tiet": "M3407HA-SF490W",
+    "mau_sac": null,
+    "gia_ban": 24890000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Laptop ASUS ZenBook 14",
+    "cau_hinh_chi_tiet": "UX3405CA-ST628W",
+    "mau_sac": null,
+    "gia_ban": 28990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Laptop Acer Aspire Lite 16 GEN 2",
+    "cau_hinh_chi_tiet": "AL16-52P-76DU",
+    "mau_sac": null,
+    "gia_ban": 19290000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Laptop Acer Gaming Aspire 7",
+    "cau_hinh_chi_tiet": "A715-59G-57TU",
+    "mau_sac": null,
+    "gia_ban": 21490000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Laptop Dell 14",
+    "cau_hinh_chi_tiet": "DC14255 R7165W11SLU",
+    "mau_sac": null,
+    "gia_ban": 26490000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Laptop HP Omnibook 5 AI 16",
+    "cau_hinh_chi_tiet": "AF1048TU BZ7Q9PA",
+    "mau_sac": null,
+    "gia_ban": 25690000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Laptop HP Omnibook X Flip 14",
+    "cau_hinh_chi_tiet": "FK0092AU BZ7P5PA",
+    "mau_sac": null,
+    "gia_ban": 29990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Laptop Lenovo LOQ 15ARP10E",
+    "cau_hinh_chi_tiet": "83S000DEVN",
+    "mau_sac": null,
+    "gia_ban": 26990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Laptop MSI Cyborg 15",
+    "cau_hinh_chi_tiet": "B13WEKG-676VN",
+    "mau_sac": null,
+    "gia_ban": 27990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Laptop MSI Katana 15 HX",
+    "cau_hinh_chi_tiet": "B14WEK-286VN",
+    "mau_sac": null,
+    "gia_ban": 35990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Laptop MSI Prestige 13 AI+ Ukiyoe Edition",
+    "cau_hinh_chi_tiet": "A2VMG-075VN",
+    "mau_sac": null,
+    "gia_ban": 51990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "Lenovo LOQ 15ARP10E",
+    "cau_hinh_chi_tiet": "83S000DEVN",
     "mau_sac": null,
     "gia_ban": 26990000,
     "ten_cua_hang": "CellphoneS"
@@ -65,6 +265,14 @@
   },
   {
     "nganh_hang": "Laptop",
+    "dong_may_goc": "MSI Cyborg 15",
+    "cau_hinh_chi_tiet": "B13WEKG-676VN",
+    "mau_sac": null,
+    "gia_ban": 27990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
     "dong_may_goc": "MSI Cyborg 15 B13WEKG-676VN",
     "cau_hinh_chi_tiet": null,
     "mau_sac": null,
@@ -73,10 +281,26 @@
   },
   {
     "nganh_hang": "Laptop",
+    "dong_may_goc": "MSI Katana 15 HX",
+    "cau_hinh_chi_tiet": "B14WEK-286VN",
+    "mau_sac": null,
+    "gia_ban": 35990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
     "dong_may_goc": "MSI Katana 15 HX B14WEK-286VN",
     "cau_hinh_chi_tiet": null,
     "mau_sac": null,
     "gia_ban": 35990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Laptop",
+    "dong_may_goc": "MSI Prestige 13 AI+ Ukiyoe Edition",
+    "cau_hinh_chi_tiet": "A2VMG-075VN",
+    "mau_sac": null,
+    "gia_ban": 51990000,
     "ten_cua_hang": "CellphoneS"
   },
   {
@@ -397,6 +621,70 @@
     "cau_hinh_chi_tiet": null,
     "mau_sac": null,
     "gia_ban": 1400000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Tai nghe Apple EarPods Lightning MWTY3ZA/A",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 500000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Tai nghe Apple EarPods USB-C MYQY3ZA/A",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 540000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Tai nghe Bluetooth Apple AirPods 4",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 3490000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Tai nghe Bluetooth Apple AirPods 4 chống ồn chủ động",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 4590000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Tai nghe Bluetooth Apple AirPods Pro 3 2025 Type-C",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 6590000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Tai nghe Bluetooth True Wireless Beats Solo Buds",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 1590000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Tai nghe chụp tai chống ồn Apple AirPods Max 2 2026",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 14790000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Tai nghe chụp tai chống ồn Apple AirPods Max 2024",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 12990000,
     "ten_cua_hang": "CellphoneS"
   },
   {
@@ -1080,6 +1368,22 @@
     "ten_cua_hang": "FPT Shop"
   },
   {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "AirPods Pro 2022",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 4990000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Tai nghe Apple EarPods 2023 MYQY3ZA/A",
+    "cau_hinh_chi_tiet": "Cổng kết nối Type C",
+    "mau_sac": null,
+    "gia_ban": 500000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
     "nganh_hang": "Điện thoại",
     "dong_may_goc": "Honor Magic V3 5G",
     "cau_hinh_chi_tiet": "12GB/512GB",
@@ -1672,6 +1976,86 @@
     "ten_cua_hang": "Hoàng Hà Mobile"
   },
   {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Apple AirPods 4",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 3459000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Apple AirPods 4 ANC",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 4559000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Apple AirPods Max 2",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 14690000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Apple AirPods Pro 3",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 6499000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Apple EarPods USB-C",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 490000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "JBL Tune 770NC",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 2499000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Samsung Galaxy Buds 3 Pro",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 4499000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Tai nghe",
+    "dong_may_goc": "Sony WH-1000XM5",
+    "cau_hinh_chi_tiet": null,
+    "mau_sac": null,
+    "gia_ban": 7499000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Điện thoại",
+    "dong_may_goc": "OPPO A6 Pro",
+    "cau_hinh_chi_tiet": "8GB/128GB",
+    "mau_sac": null,
+    "gia_ban": 8190000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Điện thoại",
+    "dong_may_goc": "Samsung Galaxy A07",
+    "cau_hinh_chi_tiet": "4GB/128GB",
+    "mau_sac": null,
+    "gia_ban": 3590000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
     "nganh_hang": "Điện thoại",
     "dong_may_goc": "Samsung Galaxy S25 Ultra",
     "cau_hinh_chi_tiet": "12GB/256GB/Snapdragon 8 Elite",
@@ -1705,6 +2089,14 @@
   },
   {
     "nganh_hang": "Điện thoại",
+    "dong_may_goc": "Samsung Galaxy S26",
+    "cau_hinh_chi_tiet": "12GB/512GB",
+    "mau_sac": null,
+    "gia_ban": 31990000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Điện thoại",
     "dong_may_goc": "Samsung Galaxy S26 Plus",
     "cau_hinh_chi_tiet": "12GB/256GB/Exynos 2600",
     "mau_sac": "Xanh",
@@ -1716,7 +2108,7 @@
     "dong_may_goc": "Samsung Galaxy S26 Plus",
     "cau_hinh_chi_tiet": "12GB/256GB",
     "mau_sac": null,
-    "gia_ban": 23990000,
+    "gia_ban": 29990000,
     "ten_cua_hang": "Hoàng Hà Mobile"
   },
   {
@@ -1732,7 +2124,7 @@
     "dong_may_goc": "Samsung Galaxy S26 Ultra",
     "cau_hinh_chi_tiet": "12GB/256GB",
     "mau_sac": null,
-    "gia_ban": 29390000,
+    "gia_ban": 36990000,
     "ten_cua_hang": "Hoàng Hà Mobile"
   },
   {
@@ -1740,7 +2132,7 @@
     "dong_may_goc": "Samsung Galaxy S26 Ultra",
     "cau_hinh_chi_tiet": "12GB/512GB",
     "mau_sac": null,
-    "gia_ban": 42290000,
+    "gia_ban": 42990000,
     "ten_cua_hang": "Hoàng Hà Mobile"
   },
   {
@@ -1825,6 +2217,62 @@
   },
   {
     "nganh_hang": "Điện thoại",
+    "dong_may_goc": "TCL 503",
+    "cau_hinh_chi_tiet": "3GB/64GB",
+    "mau_sac": null,
+    "gia_ban": 1890000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Điện thoại",
+    "dong_may_goc": "Xiaomi 15T",
+    "cau_hinh_chi_tiet": "12GB/512GB",
+    "mau_sac": null,
+    "gia_ban": 11990000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Điện thoại",
+    "dong_may_goc": "Xiaomi 17 Ultra",
+    "cau_hinh_chi_tiet": "16GB/512GB",
+    "mau_sac": null,
+    "gia_ban": 39990000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Điện thoại",
+    "dong_may_goc": "Xiaomi 17T PRO 5G",
+    "cau_hinh_chi_tiet": "12GB/512GB",
+    "mau_sac": null,
+    "gia_ban": 24990000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Điện thoại",
+    "dong_may_goc": "Xiaomi Redmi Note 15 Pro 5G",
+    "cau_hinh_chi_tiet": "12GB/256GB",
+    "mau_sac": null,
+    "gia_ban": 11290000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Điện thoại",
+    "dong_may_goc": "iPhone 13",
+    "cau_hinh_chi_tiet": "128GB",
+    "mau_sac": null,
+    "gia_ban": 17290000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Điện thoại",
+    "dong_may_goc": "iPhone 15",
+    "cau_hinh_chi_tiet": "512GB",
+    "mau_sac": null,
+    "gia_ban": 28990000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Điện thoại",
     "dong_may_goc": "iPhone 16 Pro Max",
     "cau_hinh_chi_tiet": "256GB/A18 Pro",
     "mau_sac": null,
@@ -1841,10 +2289,18 @@
   },
   {
     "nganh_hang": "Điện thoại",
+    "dong_may_goc": "iPhone 16e",
+    "cau_hinh_chi_tiet": "128GB",
+    "mau_sac": null,
+    "gia_ban": 16990000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "nganh_hang": "Điện thoại",
     "dong_may_goc": "iPhone 17",
     "cau_hinh_chi_tiet": "256GB",
     "mau_sac": null,
-    "gia_ban": 23490000,
+    "gia_ban": 24990000,
     "ten_cua_hang": "Hoàng Hà Mobile"
   },
   {
@@ -1868,7 +2324,7 @@
     "dong_may_goc": "iPhone 17 Pro",
     "cau_hinh_chi_tiet": "256GB",
     "mau_sac": null,
-    "gia_ban": 33490000,
+    "gia_ban": 34990000,
     "ten_cua_hang": "Hoàng Hà Mobile"
   },
   {
@@ -1884,7 +2340,7 @@
     "dong_may_goc": "iPhone 17 Pro",
     "cau_hinh_chi_tiet": "512GB",
     "mau_sac": null,
-    "gia_ban": 39190000,
+    "gia_ban": 41490000,
     "ten_cua_hang": "Hoàng Hà Mobile"
   },
   {
@@ -1916,7 +2372,7 @@
     "dong_may_goc": "iPhone 17 Pro Max",
     "cau_hinh_chi_tiet": "256GB",
     "mau_sac": null,
-    "gia_ban": 35990000,
+    "gia_ban": 37990000,
     "ten_cua_hang": "Hoàng Hà Mobile"
   },
   {
@@ -1924,7 +2380,7 @@
     "dong_may_goc": "iPhone 17 Pro Max",
     "cau_hinh_chi_tiet": "512GB",
     "mau_sac": null,
-    "gia_ban": 42490000,
+    "gia_ban": 44490000,
     "ten_cua_hang": "Hoàng Hà Mobile"
   },
   {
