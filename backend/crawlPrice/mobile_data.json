@@ -1,0 +1,698 @@
+[
+  {
+    "dong_may": "HONOR 400 Pro",
+    "ram": "12GB",
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 14990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "HONOR 400 Pro 5G",
+    "ram": "12GB",
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 14990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "HONOR 600 5G",
+    "ram": "8GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 15990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "HONOR X6c",
+    "ram": "6GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 3990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "HONOR X7d",
+    "ram": "8GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 5990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "HONOR X8d",
+    "ram": "8GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 7390000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "HONOR X9d",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 10690000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "HONOR X9d 5G",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 11190000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Itel P55 Plus NFC",
+    "ram": "8GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 2990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Nothing Phone 2A Plus",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 7690000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Nubia Neo 5 5G",
+    "ram": "8GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 6990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "OPPO Find N6",
+    "ram": "16GB",
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 64990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "OPPO Find X9s",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 23990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "OPPO Reno15 F 5G",
+    "ram": "8GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 11990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "POCO X8 Pro Max",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 14290000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Samsung Galaxy A07",
+    "ram": "4GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 4290000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Samsung Galaxy A07 5G",
+    "ram": "4GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 4290000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Samsung Galaxy A17 5G",
+    "ram": "8GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 6090000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Samsung Galaxy A37",
+    "ram": "8GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 9490000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Samsung Galaxy A57",
+    "ram": "8GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 11190000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Samsung Galaxy A57 5G",
+    "ram": "8GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 11990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Samsung Galaxy S25 Plus",
+    "ram": null,
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 20190000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Samsung Galaxy S25 Ultra",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 25490000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Samsung Galaxy S26 5G",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 21490000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Samsung Galaxy S26 Ultra",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 30490000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Samsung Galaxy S26 Ultra 5G",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 31790000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "TECNO Spark 50",
+    "ram": "4GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 4590000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "TECNO Spark Go 3",
+    "ram": "4GB",
+    "rom": "64GB",
+    "mau_sac": null,
+    "gia_ban": 3390000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Tecno Pova 7",
+    "ram": "8GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 4290000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Xiaomi 15",
+    "ram": "12GB",
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 18990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Xiaomi 15 Ultra",
+    "ram": "16GB",
+    "rom": "1TB",
+    "mau_sac": null,
+    "gia_ban": 27990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Xiaomi 17T 5G",
+    "ram": "12GB",
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 17490000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Xiaomi 17T Pro 5G",
+    "ram": "12GB",
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 21490000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Xiaomi POCO F8 Pro",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 14490000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Xiaomi POCO F8 Pro 5G",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 14490000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Xiaomi Redmi Note 14 Pro Plus",
+    "ram": "8GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 7790000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Xiaomi Redmi Note 14 Pro Plus 5G",
+    "ram": "8GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 7990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "iPhone 15",
+    "ram": null,
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 17690000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "iPhone 16 Pro Max",
+    "ram": null,
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 30990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "iPhone 17",
+    "ram": null,
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 23990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "iPhone 17 Pro",
+    "ram": null,
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 33790000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "iPhone 17 Pro Max",
+    "ram": null,
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 36990000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "iPhone Air",
+    "ram": null,
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 22890000,
+    "ten_cua_hang": "CellphoneS"
+  },
+  {
+    "dong_may": "Honor Magic V3 5G",
+    "ram": "12GB",
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 29990000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Honor X7d",
+    "ram": "8GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 6190000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Honor X9d 5G",
+    "ram": "8GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 10190000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Nubia A76",
+    "ram": "4GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 2790000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Nubia Air 5G",
+    "ram": "8GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 5290000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Nubia V70 Design",
+    "ram": "8GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 3090000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Nubia V70 Max",
+    "ram": "6GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 2990000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Nubia V80 Design",
+    "ram": "8GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 4190000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "OPPO Reno15 F",
+    "ram": "8GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 11990000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Oppo Find X9 Ultra 5G",
+    "ram": "12GB",
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 48900000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Oppo Find X9s 5G",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 23990000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Samsung Galaxy A17",
+    "ram": "8GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 5190000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Samsung Galaxy A57 5G",
+    "ram": "8GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 11290000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Samsung Galaxy S26 Ultra 5G",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 32490000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Samsung Galaxy S26 Ultra 5G",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": "tim",
+    "gia_ban": 31590000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Samsung Galaxy Z Fold7",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": "xanh",
+    "gia_ban": 40990000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Tecno Spark 40C",
+    "ram": "8GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 3490000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Xiaomi 17T 5G",
+    "ram": "12GB",
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 17490000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Xiaomi Poco M8 Pro 5G",
+    "ram": "8GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 9990000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Xiaomi Redmi A7 Pro",
+    "ram": "4GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 4090000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Xiaomi Redmi Note 15",
+    "ram": "6GB",
+    "rom": "128GB",
+    "mau_sac": null,
+    "gia_ban": 5690000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "iPhone 17",
+    "ram": null,
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 23990000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "iPhone 17 Pro Max",
+    "ram": null,
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 36900000,
+    "ten_cua_hang": "FPT Shop"
+  },
+  {
+    "dong_may": "Samsung Galaxy S25 Ultra",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 24990000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "Samsung Galaxy S26",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 20990000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "Samsung Galaxy S26 Plus",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 23990000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "Samsung Galaxy S26 Ultra",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 29390000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "Samsung Galaxy S26 Ultra",
+    "ram": "12GB",
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 42290000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "Samsung Galaxy Z Flip6",
+    "ram": "12GB",
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 17990000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "Samsung Galaxy Z Flip7 5G",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 23790000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "Samsung Galaxy Z Flip7 5G",
+    "ram": "12GB",
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 26990000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "Samsung Galaxy Z Fold7 5G",
+    "ram": "12GB",
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 39490000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "Samsung Galaxy Z Fold7 5G",
+    "ram": "12GB",
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 42290000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "iPhone 16 Pro Max",
+    "ram": null,
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 30790000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "iPhone 17",
+    "ram": null,
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 23490000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "iPhone 17",
+    "ram": null,
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 30490000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "iPhone 17 Pro",
+    "ram": null,
+    "rom": "1TB",
+    "mau_sac": null,
+    "gia_ban": 44490000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "iPhone 17 Pro",
+    "ram": null,
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 33490000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "iPhone 17 Pro",
+    "ram": null,
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 39190000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "iPhone 17 Pro Max",
+    "ram": null,
+    "rom": "1TB",
+    "mau_sac": null,
+    "gia_ban": 49490000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "iPhone 17 Pro Max",
+    "ram": null,
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 35990000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "iPhone 17 Pro Max",
+    "ram": null,
+    "rom": "512GB",
+    "mau_sac": null,
+    "gia_ban": 42490000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "iPhone Air",
+    "ram": null,
+    "rom": "1TB",
+    "mau_sac": null,
+    "gia_ban": 34490000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  },
+  {
+    "dong_may": "iPhone Air",
+    "ram": null,
+    "rom": "256GB",
+    "mau_sac": null,
+    "gia_ban": 22890000,
+    "ten_cua_hang": "Hoàng Hà Mobile"
+  }
+]
